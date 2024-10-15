@@ -3,10 +3,14 @@
 # kill -9 ID of process
 # mysql case sensitive use COLLATE utf8mb3_bin
 # ==================================================
+# pip install flask-debugtoolbar to debug
 # initiate the virtual environment
 # Uses .venv python 3.12.3
-# 1.  ~/Sandbox/pythonlogin 0:46:54 »» source .venv/bin/activate
-# 2.  ~/Sandbox/pythonlogin 0:47:10 »» python pythonlogin.py
+# 1. » source .venv/bin/activate
+# 2. » sudo ./rungunicordpythonlogin.sh
+# 3 Add a breakpoint in pythonlogin.py
+# 4. » click arrow on left side "Run and Debug"
+
 
 import os
 import re
@@ -14,7 +18,18 @@ import hashlib
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 from dotenv import load_dotenv
+import hashlib
 
+from flask import current_app
+
+load_dotenv()
+
+
+def before_first_request():
+    print("Debug Mode:", current_app.debug)
+
+print("FLASK_DEBUG:", os.getenv("FLASK_DEBUG"))
+print("FLASK_APP:", os.getenv("FLASK_APP"))
 
 def validate_and_register(username, password, email):
 
@@ -91,7 +106,6 @@ def validate_and_register(username, password, email):
 
 
 # Establish a database connection
-load_dotenv()
 db_config = {
     "host": os.getenv("DB_HOST"),
     "port": os.getenv("DB_PORT"),
@@ -222,6 +236,7 @@ def logout():
 
 @app.route("/", methods=["GET", "POST"], endpoint="login")
 def login():
+
     # Output a message if something goes wrong...
     msg = ""
     result = ""
@@ -278,4 +293,4 @@ def login():
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.1.176", port=3200, debug=False)
+    app.run(host="192.168.1.176", port=3100, debug=True)
